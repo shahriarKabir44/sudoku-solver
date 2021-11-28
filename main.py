@@ -1,13 +1,13 @@
 grid = [
-    [0, 0, 8, 0, 3, 0, 2, 0, 5],
-    [5, 0, 4, 0, 0, 2, 7, 0, 0],
-    [7, 2, 0, 4, 0, 8, 3, 6, 0],
-    [4, 7, 0, 0, 0, 3, 0, 2, 6],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [8, 9, 0, 7, 0, 0, 0, 1, 3],
-    [0, 5, 1, 3, 0, 9, 0, 7, 4],
-    [0, 0, 7, 6, 0, 0, 1, 0, 2],
-    [6, 0, 3, 0, 7, 0, 8, 0, 0]
+    [0, 0, 0, 0, 0, 0, 0, 8, 4],
+    [0, 1, 4, 5, 0, 0, 3, 0, 7],
+    [7, 5, 8, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 7, 0, 0, 8, 0, 0],
+    [0, 6, 0, 3, 9, 5, 4, 7, 0],
+    [0, 0, 2, 8, 4, 6, 9, 5, 1],
+    [4, 0, 0, 0, 2, 8, 0, 1, 5],
+    [9, 8, 6, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 6, 0, 4, 7, 9, 8]
 ]
 
 
@@ -76,8 +76,12 @@ class SudocuSolver:
                     for j in range(1, 10):
                         if self.canClaim(n, k, j):
                             self.claim(n, k, j)
+                    if self.claimGrid[n][k].__len__() == 1:
+                        elem = list(self.claimGrid[n][k])
+                        self.fillCell(n, k, elem[0])
 
     def startFilling(self):
+        attempts = 0
         while 1:
             hasFound = 0
             for n in range(9):
@@ -86,10 +90,16 @@ class SudocuSolver:
                         temp = list(self.claimGrid[n][k].copy())
                         for val in temp:
                             if self.canFillCell(n, k, val):
-                                hasFound = 1
+                                hasFound += 1
                                 self.fillCell(n, k, val)
-            if not hasFound:
-                break
+                                break
+            if hasFound == 0:
+                attempts += 1
+                if attempts == 2:
+                    break
+
+    def dfs(self, x, y, val):
+        self.fillCell(x, y, val)
 
     def canFillCell(self, x, y, val):
         if val not in self.claimGrid[x][y]:
@@ -120,7 +130,7 @@ class SudocuSolver:
         return res[self.getBlockNumber(x)]
 
     def removeClaim(self, x, y, val):
-        self.claimGrid[x][y].remove(val)
+        self.claimGrid[x][y] = set()
         self.rowWiseClaimCounter[x][val] -= 1
         self.columnWiseClaimCounter[y][val] -= 1
         self.boxWiseClaimCounter[self.getBlockNumber(
@@ -137,4 +147,4 @@ class SudocuSolver:
 
 
 solution = SudocuSolver(grid)
-print(solution.grid)
+print(*solution.grid, sep='\n')
