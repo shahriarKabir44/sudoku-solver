@@ -1,0 +1,15 @@
+.sudokuBox{
+    display: grid;
+    grid-template-columns: repeat(3,30%);
+}
+.block{
+    display: grid;
+    grid-template-columns: repeat(3,30%);
+    grid-template-rows: repeat(3,30%);
+}
+
+.cell{
+    height: 100%;
+    width: 100%;
+    border: 1px solid;
+}
