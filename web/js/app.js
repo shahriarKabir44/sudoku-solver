@@ -179,5 +179,4 @@ class SudocuSolver {
     }
 }
 
-var solution = new SudocuSolver(grid)
-console.log(solution.grid);
+ 

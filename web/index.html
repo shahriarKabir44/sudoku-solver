@@ -6,12 +6,29 @@
     <link rel="stylesheet" href="./style.css">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.2/angular.min.js"
+        integrity="sha512-7oYXeK0OxTFxndh0erL8FsjGvrl2VMDor6fVqzlLGfwOQQqTbYsGPv4ZZ15QHfSk80doyaM0ZJdvkyDcVO7KFA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <title>Document</title>
 </head>
 
-<body>
 
+<body>
+    <div ng-app="sudocuApp">
+        <div ng-controller="main" ng-init="init()">
+            <div class="sudokuBox" id="root">
+                <div class="block" ng-repeat="box in rangeList[9]">
+                    <div class="box" ng-class="{focus:cell.x==currentFocus.x && cell.y==currentFocus.y}"
+                        ng-repeat="cell in gridRange[box]" ng-click="focused(cell)">
+                        <p ng-if="grid[cell.x][cell.y]!=0"> {{grid[cell.x][cell.y] }}</p>
+                        <p ng-if="grid[cell.x][cell.y]==0"> </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
+
 <script src="./js/app.js"></script>
 <script src="./js/UI.js"></script>
 
