@@ -41,10 +41,13 @@ class SudocuSolver {
         this.columnWiseExistence = this.createList(9, 1)
         this.boxWiseExistence = new Array(3).fill(0).map(x => this.createList(3, 1))
 
+
+
+    }
+    solve() {
         this.updateExisting()
         this.initClaim()
         this.startFilling()
-
     }
     // major methods
     updateExisting() {
@@ -95,7 +98,93 @@ class SudocuSolver {
                     }
                 }
             }
-            if (!hasFound) return
+            if (!this.checkStateValidity()) {
+                this.grid = null
+                return
+            }
+            if (!hasFound) {
+                for (let n = 0; n < 9; n++) {
+                    for (let k = 0; k < 9; k++) {
+                        if (!this.grid[n][k]) {
+                            let otherClaims = [...this.claimGrid[n][k]]
+                            for (let claim of otherClaims) {
+                                if (this.hitAndTrial(claim, n, k)) return
+                            }
+                        }
+                    }
+                }
+                break
+            }
+        }
+    }
+
+    isSolved() {
+        for (let n = 0; n < 9; n++) {
+            for (let k = 0; k < 9; k++) {
+                if (!this.grid[n][k])
+                    return false
+            }
+            if ([...this.rowWiseExistence[n]].length != 9) return false
+        }
+    }
+
+    attempt() {
+        while (1) {
+            console.log('object');
+            var hasFound = 0
+            for (let n = 0; n < 9; n++) {
+                for (let k = 0; k < 9; k++) {
+                    if (!this.grid[n][k]) {
+                        var temp = [...this.claimGrid[n][k]]
+                        for (let val of temp) {
+                            if (this.canFillCell(n, k, val)) {
+                                hasFound = 1
+                                this.fillCell(n, k, val)
+                                break
+                            }
+                        }
+                    }
+                }
+            }
+            if (!this.checkStateValidity()) {
+                this.grid = null
+                return -1
+            }
+            if (!hasFound) break
+        }
+        return (this.isSolved()) ? 1 : 0
+    }
+
+    hitAndTrial(guess, x, y) {
+        var guesses = this.claimGrid[x][y]
+        this.fillCell(x, y, guess)
+        var outcome = this.attempt()
+        if (outcome == -1) {
+            this.grid[x][y] = 0
+            for (let n of guesses) {
+                this.updateClaim(x, y, n, 1)
+            }
+            return false
+        }
+        else {
+            if (outcome == 1) {
+                return true
+            }
+            else {
+                for (let n = 0; n < 9; n++) {
+                    for (let k = 0; k < 9; k++) {
+                        if (!this.grid[n][k]) {
+                            let claims = this.claimGrid[n][k]
+                            for (let claim of claims) {
+                                let canSolve = this.hitAndTrial(claim, n, k)
+                                if (canSolve) {
+                                    return true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -112,6 +201,7 @@ class SudocuSolver {
         this.columnWiseClaimCounter[y][val] += type
         this.boxWiseClaimCounter[this.getBlockNumber(
             x)][this.getBlockNumber(y)][val] += type
+
     }
 
     updateClaim(x, y, val, type = 1) {
@@ -120,7 +210,7 @@ class SudocuSolver {
             if (!this.rowWiseClaimCounter[x][val])
                 this.rowWiseClaimCounter[x][val] = 0
 
-            if (!this.columnWiseClaimCounter[x][val])
+            if (!this.columnWiseClaimCounter[y][val])
                 this.columnWiseClaimCounter[y][val] = 0
 
             if (!this.boxWiseClaimCounter[this.getBlockNumber(x)][this.getBlockNumber(y)][val])
@@ -160,6 +250,18 @@ class SudocuSolver {
         var res = [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
         return res[this.getBlockNumber(x)]
     }
+    checkStateValidity() {
+        for (let n = 0; n < 9; n++) {
+            for (let k = 0; k < 9; k++) {
+                if (!this.grid[n][k]) {
+                    if (![...this.claimGrid[n][k]].length) {
+                        return false
+                    }
+                }
+            }
+        }
+        return true
+    }
     removeClaimUtil(x, y, val) {
         for (let n = 0; n < 9; n++) {
             if (this.claimGrid[x][n].has(val)) {
@@ -179,4 +281,6 @@ class SudocuSolver {
     }
 }
 
- 
+var solver = new SudocuSolver(grid)
+solver.solve()
+console.log(solver.grid);
