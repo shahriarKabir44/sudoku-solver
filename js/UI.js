@@ -45,4 +45,8 @@ app.controller('main', function ($scope) {
 
         })
     }
+    $scope.solve = function () {
+        var solver = new SudocuSolver($scope.grid)
+        $scope.grid = solver.grid
+    }
 })
