@@ -1,15 +1,25 @@
+// var grid = [
+//     [0, 0, 0, 5, 6, 9, 2, 4, 7],
+//     [0, 0, 9, 8, 0, 4, 0, 6, 3],
+//     [4, 6, 2, 0, 3, 7, 8, 0, 9],
+//     [0, 8, 0, 0, 0, 6, 7, 0, 4],
+//     [3, 9, 4, 7, 8, 2, 0, 0, 0],
+//     [0, 7, 6, 9, 4, 1, 3, 0, 0],
+//     [6, 1, 7, 0, 9, 0, 4, 3, 8],
+//     [0, 0, 5, 0, 7, 3, 9, 0, 0],
+//     [0, 2, 0, 4, 1, 0, 0, 7, 5]
+// ]
 var grid = [
-    [0, 0, 0, 5, 6, 9, 2, 4, 7],
-    [0, 0, 9, 8, 0, 4, 0, 6, 3],
-    [4, 6, 2, 0, 3, 7, 8, 0, 9],
-    [0, 8, 0, 0, 0, 6, 7, 0, 4],
-    [3, 9, 4, 7, 8, 2, 0, 0, 0],
-    [0, 7, 6, 9, 4, 1, 3, 0, 0],
-    [6, 1, 7, 0, 9, 0, 4, 3, 8],
-    [0, 0, 5, 0, 7, 3, 9, 0, 0],
-    [0, 2, 0, 4, 1, 0, 0, 7, 5]
+    [0, 5, 7, 8, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 1, 8, 0],
+    [3, 0, 0, 0, 0, 0, 4, 6, 5],
+    [0, 0, 9, 6, 0, 0, 3, 7, 0],
+    [0, 0, 1, 0, 7, 4, 0, 5, 2],
+    [2, 7, 6, 0, 0, 0, 9, 0, 0],
+    [0, 6, 5, 1, 0, 9, 8, 2, 0],
+    [0, 8, 0, 0, 6, 2, 5, 0, 0],
+    [1, 2, 0, 0, 4, 8, 7, 0, 0]
 ]
-
 class SudocuSolver {
 
     createList(lnt, type = 0) {
@@ -74,6 +84,7 @@ class SudocuSolver {
                     }
                     if ([...this.claimGrid[n][k]].length == 1) {
                         var elm = [...this.claimGrid[n][k]]
+                        console.log(n, k, elm[0], 'one');
                         this.fillCell(n, k, elm[0])
                     }
                 }
@@ -81,28 +92,37 @@ class SudocuSolver {
         }
     }
 
-    startFilling() {
-        while (1) {
-            var hasFound = 0
-            for (let n = 0; n < 9; n++) {
-                for (let k = 0; k < 9; k++) {
-                    if (!this.grid[n][k]) {
-                        var temp = [...this.claimGrid[n][k]]
-                        for (let val of temp) {
-                            if (this.canFillCell(n, k, val)) {
-                                hasFound = 1
-                                this.fillCell(n, k, val)
-                                break
-                            }
+    fillupGrid() {
+        var hasFound = 0
+        for (let n = 0; n < 9; n++) {
+            for (let k = 0; k < 9; k++) {
+                if (!this.grid[n][k]) {
+                    var temp = [...this.claimGrid[n][k]]
+                    for (let val of temp) {
+                        if (this.canFillCell(n, k, val)) {
+                            hasFound = 1
+                            this.fillCell(n, k, val)
+                            break
                         }
                     }
                 }
             }
-            if (!this.checkStateValidity()) {
-                this.grid = null
-                return
-            }
+        }
+        return hasFound
+    }
+
+    startFilling() {
+        while (1) {
+            console.log('----------------------------------------------------');
+            let hasFound = this.fillupGrid()
+
             if (!hasFound) {
+                if (!this.checkStateValidity()) {
+                    this.grid = null
+                    console.log('object');
+                    return
+                }
+                if (this.isSolved()) return
                 for (let n = 0; n < 9; n++) {
                     for (let k = 0; k < 9; k++) {
                         if (!this.grid[n][k]) {
@@ -131,21 +151,7 @@ class SudocuSolver {
     attempt() {
         while (1) {
             console.log('object');
-            var hasFound = 0
-            for (let n = 0; n < 9; n++) {
-                for (let k = 0; k < 9; k++) {
-                    if (!this.grid[n][k]) {
-                        var temp = [...this.claimGrid[n][k]]
-                        for (let val of temp) {
-                            if (this.canFillCell(n, k, val)) {
-                                hasFound = 1
-                                this.fillCell(n, k, val)
-                                break
-                            }
-                        }
-                    }
-                }
-            }
+            var hasFound = this.fillupGrid()
             if (!this.checkStateValidity()) {
                 this.grid = null
                 return -1
@@ -217,16 +223,28 @@ class SudocuSolver {
                 this.boxWiseClaimCounter[this.getBlockNumber(
                     x)][this.getBlockNumber(y)][val] = 0
         }
-        else
+        else if (type == -1)
             this.claimGrid[x][y].delete(val)
         this.updateClaimCounter(x, y, val, type)
     }
     canFillCell(x, y, val) {
         if (!this.claimGrid[x][y].has(val)) return false
-        if ([...this.claimGrid[x][y]].length == 1) return true
-        if (this.rowWiseClaimCounter[x][val] == 1) return true
-        if (this.columnWiseClaimCounter[y][val] == 1) return true
-        if (this.boxWiseClaimCounter[this.getBlockNumber(x)][this.getBlockNumber(y)][val] == 1) return true
+        if ([...this.claimGrid[x][y]].length == 1) {
+            console.log(x, y, val, 'one');
+            return true
+        }
+        if (this.rowWiseClaimCounter[x][val] == 1) {
+            console.log(x, y, val, 'row');
+            return true
+        }
+        if (this.columnWiseClaimCounter[y][val] == 1) {
+            console.log(x, y, val, 'column');
+            return true
+        }
+        if (this.boxWiseClaimCounter[this.getBlockNumber(x)][this.getBlockNumber(y)][val] == 1) {
+            console.log(x, y, val, 'box');
+            return true
+        }
         return false
     }
     fillCell(x, y, val) {
@@ -237,12 +255,12 @@ class SudocuSolver {
         this.boxWiseExistence[this.getBlockNumber(
             x)][this.getBlockNumber(y)].add(val)
 
-        this.removeClaim(x, y)
+        this.removeClaim(x, y, val)
     }
-    removeClaim(x, y) {
+    removeClaim(x, y, val) {
         var otherClaims = [...this.claimGrid[x][y]]
         for (let n of otherClaims) {
-            this.removeClaimUtil(x, y, n)
+            this.removeClaimUtil(x, y, n, val == n ? -1 : 0)
         }
         this.claimGrid[x][y] = new Set()
     }
@@ -262,19 +280,19 @@ class SudocuSolver {
         }
         return true
     }
-    removeClaimUtil(x, y, val) {
+    removeClaimUtil(x, y, val, type) {
         for (let n = 0; n < 9; n++) {
             if (this.claimGrid[x][n].has(val)) {
-                this.updateClaim(x, n, val, -1)
+                this.updateClaim(x, n, val, type)
             }
             if (this.claimGrid[n][y].has(val)) {
-                this.updateClaim(n, y, val, -1)
+                this.updateClaim(n, y, val, type)
             }
         }
         for (let n of this.getRange(x)) {
             for (let k of this.getRange(y)) {
                 if (this.claimGrid[n][k].has(val)) {
-                    this.updateClaim(n, k, val, -1)
+                    this.updateClaim(n, k, val, type)
                 }
             }
         }
