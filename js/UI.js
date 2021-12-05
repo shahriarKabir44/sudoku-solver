@@ -18,8 +18,10 @@ app.controller('main', function ($scope) {
         x: 1,
         y: 1
     }
+    $scope.fillup = function (val) {
+        $scope.grid[$scope.currentFocus.x][$scope.currentFocus.y] = val + 1
+    }
     $scope.init = function () {
-
         $scope.grid = new Array(9).fill(0).map(x => new Array(9).fill(0))
         for (let n = 0; n < 9; n++) {
             var temp = []
@@ -47,6 +49,9 @@ app.controller('main', function ($scope) {
     }
     $scope.solve = function () {
         var solver = new SudocuSolver($scope.grid)
-        $scope.grid = solver.grid
+
+
+        $scope.grid = solver.solve()
+        console.log($scope.grid);
     }
 })

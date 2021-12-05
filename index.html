@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
     <link rel="stylesheet" href="./style.css">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,7 +10,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.2/angular.min.js"
         integrity="sha512-7oYXeK0OxTFxndh0erL8FsjGvrl2VMDor6fVqzlLGfwOQQqTbYsGPv4ZZ15QHfSk80doyaM0ZJdvkyDcVO7KFA=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <title>Document</title>
+    <title>Sudoku Solver</title>
 </head>
 
 
@@ -24,9 +25,18 @@
                         <p ng-if="grid[cell.x][cell.y]==0"> </p>
                     </div>
                 </div>
+
             </div>
-            <button class="btn btn-primary" ng-click="solve()">solve!</button>
+            <div class="buttons" style="width: 500px; display: grid;grid-template-columns: repeat(9,10%);">
+                <div ng-repeat=" val in rangeList[9]">
+                    <button class="btn btn-primary" ng-click="fillup(val)"> {{val+1}} </button>
+                </div>
+                <br>
+            </div>
+
         </div>
+        <button class="btn btn-success" ng-click="solve()">solve!</button>
+    </div>
     </div>
 </body>
 

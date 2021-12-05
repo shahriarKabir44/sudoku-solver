@@ -1,6 +1,7 @@
 .sudokuBox{
     display: grid;
-    grid-template-columns: repeat(3,30%);
+    grid-template-columns: repeat(3,33%);
+    grid-template-rows: repeat(3,33%);
     max-height: 500px;
     width: 500px;
     height: 500px;
@@ -9,12 +10,14 @@
     display: grid;
     grid-template-columns: repeat(3,calc(99% / 3));
     grid-template-rows: repeat(3,calc(99% / 3));
+    margin: 1%;
 }
 
 .box{
     height: 100%;
     width: 100%;
     border: 1px solid;
+    text-align: center;
  }
 .block-red{
     border: 1px solid red;

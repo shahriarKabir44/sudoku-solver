@@ -23,8 +23,8 @@ grid = [
 
 
 class SudocuSolver:
-    def __init__(self, grid) -> None:
-        self.grid = grid
+    def __init__(self) -> None:
+        self.grid = None
 
         # claims
         self.claimGrid = [[set() for n in range(9)] for k in range(9)]
@@ -38,12 +38,61 @@ class SudocuSolver:
         self.columnWiseExistence = [set() for n in range(9)]
         self.boxWiseExistence = [[set() for n in range(3)] for k in range(3)]
 
+    def createDeepCopy(self):
+        tempSnapShot = SudocuSolver()
+        tempSnapShot.grid = [self.grid[n].copy() for n in range(9)]
+
+        tempSnapShot.claimGrid = [[] for n in range(9)]
+        tempSnapShot.rowWiseClaimCounter = []
+        tempSnapShot.columnWiseClaimCounter = []
+
+        tempSnapShot.boxWiseClaimCounter = [[] for n in range(3)]
+
+        tempSnapShot.rowWiseExistence = []
+        tempSnapShot.columnWiseExistence = []
+
+        tempSnapShot.boxWiseExistence = [[] for n in range(3)]
+
+        for n in range(9):
+            tempSnapShot.rowWiseClaimCounter .append(
+                self.rowWiseClaimCounter[n].copy())
+            tempSnapShot.columnWiseClaimCounter .append(
+                self.columnWiseClaimCounter[n].copy())
+            tempSnapShot.rowWiseExistence .append(
+                self.rowWiseExistence[n].copy())
+            tempSnapShot.columnWiseExistence .append(
+                self.columnWiseExistence[n].copy())
+
+            for k in range(9):
+                tempSnapShot.claimGrid .append(self.claimGrid[n][k].copy())
+
+        for n in range(3):
+            for k in range(3):
+                tempSnapShot.boxWiseClaimCounter[n][k] = self.boxWiseClaimCounter[n][k].copy(
+                )
+                tempSnapShot.boxWiseExistence[n][k] = self.boxWiseExistence[n][k].copy(
+                )
+
+        return tempSnapShot
+
+    def revertToPreviousState(self, previousState):
+        self.grid = previousState.state
+        self.claimGrid = previousState.claimGrid
+        self.rowWiseClaimCounter = previousState.rowWiseClaimCounter
+        self.columnWiseClaimCounter = previousState.columnWiseClaimCounter
+        self.boxWiseClaimCounter = previousState.boxWiseClaimCounter
+
+        # existing
+
+        self.rowWiseExistence = previousState.rowWiseExistence
+        self.columnWiseExistence = previousState.columnWiseExistence
+        self.boxWiseExistence = previousState.boxWiseExistence
+
+    def solveSudocu(self, grid: list[list[int]]):
+        self.grid = grid
         self.updateExisting()
         self.initClaim()
         self.startFilling()
-
-    def solveSudocu(self):
-
         return self.grid
 
     def getBlockNumber(self, x):

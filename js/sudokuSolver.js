@@ -63,7 +63,6 @@ class SudocuSolver {
         this.boxWiseExistence = new Array(3).fill(0).map(x => this.createList(3, 1))
 
 
-
     }
     createDeepCopy() {
         var self = {}
@@ -104,7 +103,6 @@ class SudocuSolver {
     revertSelf(previousState) {
         this.grid = previousState.grid
 
-
         this.claimGrid = previousState.claimGrid
         this.rowWiseClaimCounter = previousState.rowWiseClaimCounter
         this.columnWiseClaimCounter = previousState.columnWiseClaimCounter
@@ -117,9 +115,11 @@ class SudocuSolver {
     }
 
     solve() {
+
         this.updateExisting()
         this.initClaim()
         this.startFilling()
+        return this.grid
     }
     // major methods
     updateExisting() {
@@ -192,13 +192,11 @@ class SudocuSolver {
     }
     startFilling() {
         while (1) {
-            console.log('----------------------------------------------------');
             let hasFound = this.fillupGrid()
 
             if (!hasFound) {
                 if (!this.checkStateValidity()) {
                     this.grid = null
-                    console.log('object');
                     return
                 }
                 if (this.isSolved()) return
@@ -313,19 +311,15 @@ class SudocuSolver {
     canFillCell(x, y, val) {
         if (!this.claimGrid[x][y].has(val)) return false
         if ([...this.claimGrid[x][y]].length == 1) {
-            console.log(x, y, val, 'one');
             return true
         }
         if (this.rowWiseClaimCounter[x][val] == 1) {
-            console.log(x, y, val, 'row');
             return true
         }
         if (this.columnWiseClaimCounter[y][val] == 1) {
-            console.log(x, y, val, 'column');
             return true
         }
         if (this.boxWiseClaimCounter[this.getBlockNumber(x)][this.getBlockNumber(y)][val] == 1) {
-            console.log(x, y, val, 'box');
             return true
         }
         return false
@@ -382,6 +376,3 @@ class SudocuSolver {
     }
 }
 
-var solver = new SudocuSolver(grid)
-solver.solve()
-console.log(solver.grid);
