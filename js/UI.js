@@ -21,7 +21,7 @@ app.controller('main', function ($scope) {
         y: 1
     }
     $scope.fillup = function (val) {
-        $scope.grid[$scope.currentFocus.x][$scope.currentFocus.y] = val + 1
+        $scope.grid[$scope.currentFocus.x][$scope.currentFocus.y] = val 
     }
     $scope.init = function () {
          $scope.grid = new Array(9).fill(0).map(x => new Array(9).fill(0))
