@@ -4,7 +4,9 @@ app.controller('main', function ($scope) {
 
     $scope.rangeList = {
         '9': new Array(9).fill(0).map((x, i) => { return i }),
-        '3': new Array(3).fill(0).map((x, i) => { return i })
+        '3': new Array(3).fill(0).map((x, i) => { return i }),
+        '10':new Array(10).fill(0).map((x, i) => { return i }),
+     
     }
 
     $scope.grid = []
