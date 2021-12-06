@@ -22,7 +22,18 @@ app.controller('main', function ($scope) {
         $scope.grid[$scope.currentFocus.x][$scope.currentFocus.y] = val + 1
     }
     $scope.init = function () {
-        $scope.grid = new Array(9).fill(0).map(x => new Array(9).fill(0))
+        //$scope.grid = new Array(9).fill(0).map(x => new Array(9).fill(0))
+        $scope.grid = [
+            [0, 5, 0, 7, 0, 0, 0, 0, 0],
+            [0, 0, 9, 3, 0, 0, 2, 7, 6],
+            [0, 0, 0, 8, 0, 4, 5, 0, 1],
+            [5, 0, 0, 0, 0, 0, 4, 2, 0],
+            [0, 0, 0, 5, 0, 8, 0, 0, 0],
+            [0, 6, 1, 0, 0, 0, 0, 0, 5],
+            [8, 0, 7, 1, 0, 3, 0, 0, 0],
+            [9, 1, 6, 0, 0, 0, 3, 0, 0],
+            [0, 0, 0, 0, 0, 7, 0, 1, 0]
+        ]
         for (let n = 0; n < 9; n++) {
             var temp = []
             for (let k of $scope.getRange(Math.floor(n / 3))) {
@@ -49,8 +60,6 @@ app.controller('main', function ($scope) {
     }
     $scope.solve = function () {
         var solver = new SudocuSolver($scope.grid)
-
-
         $scope.grid = solver.solve()
         console.log($scope.grid);
     }
