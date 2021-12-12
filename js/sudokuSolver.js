@@ -21,15 +21,15 @@
 //     [1, 2, 0, 0, 4, 8, 7, 0, 0]
 // ]
 var grid = [
-    [0, 5, 0, 7, 0, 0, 0, 0, 0],
-    [0, 0, 9, 3, 0, 0, 2, 7, 6],
-    [0, 0, 0, 8, 0, 4, 5, 0, 1],
-    [5, 0, 0, 0, 0, 0, 4, 2, 0],
-    [0, 0, 0, 5, 0, 8, 0, 0, 0],
-    [0, 6, 1, 0, 0, 0, 0, 0, 5],
-    [8, 0, 7, 1, 0, 3, 0, 0, 0],
-    [9, 1, 6, 0, 0, 0, 3, 0, 0],
-    [0, 0, 0, 0, 0, 7, 0, 1, 0]
+    [0, 0, 0, 0, 9, 0, 0, 1, 6],
+    [6, 0, 0, 0, 3, 2, 0, 0, 7],
+    [2, 0, 0, 7, 0, 0, 0, 5, 3],
+    [0, 0, 7, 6, 0, 0, 0, 0, 5],
+    [0, 0, 0, 0, 2, 0, 3, 0, 0],
+    [0, 4, 0, 0, 1, 5, 7, 0, 0],
+    [0, 0, 6, 0, 0, 1, 0, 0, 4],
+    [0, 5, 0, 3, 0, 0, 0, 0, 0],
+    [0, 0, 3, 0, 5, 0, 0, 8, 0]
 ]
 class SudocuSolver {
 
@@ -240,17 +240,19 @@ class SudocuSolver {
 
     hitAndTrial(guess, x, y) {
         console.log('tiral', x, y, guess);
-        var guesses = this.claimGrid[x][y]
         var self = this.createDeepCopy()
         this.fillCell(x, y, guess)
 
         var outcome = this.attempt()
         if (outcome == -1) {
+            console.log('invalid guess', x, y, guess);
+
             this.revertSelf(self)
             return false
         }
         else {
             if (outcome == 1) {
+                console.log('valid guess', x, y, guess);
                 return true
             }
             else {
@@ -262,14 +264,15 @@ class SudocuSolver {
                 for (let claim of claims) {
                     let tempSnapShot = this.createDeepCopy()
                     let canSolve = this.hitAndTrial(claim, n, k)
+                    var isPossible = 0
                     if (canSolve) {
                         return true
                     }
                     else {
                         this.revertSelf(tempSnapShot)
-                        return false
                     }
                 }
+                return false
 
             }
         }
@@ -311,15 +314,22 @@ class SudocuSolver {
     canFillCell(x, y, val) {
         if (!this.claimGrid[x][y].has(val)) return false
         if ([...this.claimGrid[x][y]].length == 1) {
+            console.log(x, y, val, 'one');
             return true
         }
         if (this.rowWiseClaimCounter[x][val] == 1) {
+            console.log(x, y, val, 'row');
+
             return true
         }
         if (this.columnWiseClaimCounter[y][val] == 1) {
+            console.log(x, y, val, 'column');
+
             return true
         }
         if (this.boxWiseClaimCounter[this.getBlockNumber(x)][this.getBlockNumber(y)][val] == 1) {
+            console.log(x, y, val, 'box');
+
             return true
         }
         return false
@@ -350,6 +360,7 @@ class SudocuSolver {
             for (let k = 0; k < 9; k++) {
                 if (!this.grid[n][k]) {
                     if (![...this.claimGrid[n][k]].length) {
+                        console.log(n, k, [...this.claimGrid[n][k]], 'invalid');
                         return false
                     }
                 }

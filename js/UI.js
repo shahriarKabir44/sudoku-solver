@@ -5,8 +5,8 @@ app.controller('main', function ($scope) {
     $scope.rangeList = {
         '9': new Array(9).fill(0).map((x, i) => { return i }),
         '3': new Array(3).fill(0).map((x, i) => { return i }),
-        '10':new Array(10).fill(0).map((x, i) => { return i }),
-     
+        '10': new Array(10).fill(0).map((x, i) => { return i }),
+
     }
 
     $scope.grid = []
@@ -21,11 +21,11 @@ app.controller('main', function ($scope) {
         y: 1
     }
     $scope.fillup = function (val) {
-        $scope.grid[$scope.currentFocus.x][$scope.currentFocus.y] = val 
+        $scope.grid[$scope.currentFocus.x][$scope.currentFocus.y] = val
     }
     $scope.init = function () {
-         $scope.grid = new Array(9).fill(0).map(x => new Array(9).fill(0))
-         
+        $scope.grid = localStorage.getItem('grid') ? JSON.parse(localStorage.getItem('grid')) : new Array(9).fill(0).map(x => new Array(9).fill(0))
+
         for (let n = 0; n < 9; n++) {
             var temp = []
             for (let k of $scope.getRange(Math.floor(n / 3))) {
@@ -36,7 +36,6 @@ app.controller('main', function ($scope) {
             }
             $scope.gridRange.push(temp)
         }
-        console.log($scope.gridRange)
     }
     $scope.focused = function (cell) {
         $scope.currentFocus.x = cell.x
@@ -51,6 +50,7 @@ app.controller('main', function ($scope) {
         })
     }
     $scope.solve = function () {
+        localStorage.setItem('grid', JSON.stringify($scope.grid))
         var solver = new SudocuSolver($scope.grid)
         $scope.grid = solver.solve()
         console.log($scope.grid);
