@@ -17,8 +17,8 @@ app.controller('main', function ($scope) {
     }
     $scope.gridRange = []
     $scope.currentFocus = {
-        x: 1,
-        y: 1
+        x: 0,
+        y: 0
     }
     $scope.fillup = function (val) {
         $scope.grid[$scope.currentFocus.x][$scope.currentFocus.y] = val
@@ -46,8 +46,13 @@ app.controller('main', function ($scope) {
         if (isNaN(x)) return
         $scope.$apply(() => {
             $scope.grid[$scope.currentFocus.x][$scope.currentFocus.y] = x
-
+            $scope.currentFocus.y++;
+            if ($scope.currentFocus.y == 9) {
+                $scope.currentFocus.y = 0
+                $scope.currentFocus.x++;
+            }
         })
+
     }
     $scope.solve = function () {
         localStorage.setItem('grid', JSON.stringify($scope.grid))
